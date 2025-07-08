@@ -1,4 +1,4 @@
-FROM openjdk:11-jre-slim
+FROM eclipse-temurin:21-jdk
 
 SHELL ["/bin/bash", "-c"]
 
@@ -21,7 +21,6 @@ EXPOSE 4502 30303
 CMD ["sh", "-c", "\
     echo 'Starting AEM in AUTHOR mode on port 4502 with DEBUG enabled' && \
     java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:30303 \
-    -jar aem-quickstart.jar -r author -gui -port 4502 && \
-    sleep 60 && \
-    java -jar aem-quickstart.jar -installPackage install/cif.far \
+    -Xmx2048m -XX:MaxMetaspaceSize=512m \
+    -jar aem-quickstart.jar -r author -port 4502 -nofork \
     "]
