@@ -50,11 +50,13 @@ The dispatcher SDK tools are already included, but if you need to update:
 
 1. **🔧 `aem-sdk-dispatcher-tools-*.sh`** - Dispatcher SDK installer script
    - 📥 Download latest version from Adobe Software Distribution
-   - Current version: `aem-sdk-dispatcher-tools-2.0.235-unix.sh`
+   - Example version: `aem-sdk-dispatcher-tools-2.0.235-unix.sh`
+   - Place it manually in `dispatcher/` directory
+   - Run bash script to extract its content
 
    ```bash
    cd dispatcher
-   run chmod a+x aem-sdk-dispatcher-tools-2.0.235-unix.sh && ./aem-sdk-dispatcher-tools-2.0.235-unix.sh
+   run chmod a+x aem-sdk-dispatcher-tools-x.y.z-unix.sh && ./aem-sdk-dispatcher-tools-x.y.z-unix.sh
    ```
 
 ## 🚀 Setup Instructions
@@ -72,7 +74,7 @@ The dispatcher SDK tools are already included, but if you need to update:
 
 3. **⚙️ Configure environment** (optional)
    - Edit `.env` file to change ports or project name
-   - Default ports: Author (4502), Publish (4503), Dispatcher (8080)
+   - Default ports: Author (4502, debug 30303), Publish (4503, debug 30304), Dispatcher (8080)
 
 4. **🐳 Start the environment**
    
@@ -107,7 +109,7 @@ Both AEM instances are configured for remote debugging:
 
 ### ⚙️ Dispatcher Configuration
 
-Dispatcher configuration is located in `dispatcher/dispatcher-sdk-2.0.235/src/`:
+Dispatcher configuration is located in `dispatcher/dispatcher-sdk-x.y.z/src/`:
 - 🌐 Virtual hosts: `conf.d/available_vhosts/`
 - 🚜 Farms: `conf.dispatcher.d/available_farms/`
 - 🔄 Rewrites: `conf.d/rewrites/`
@@ -130,7 +132,7 @@ AEM data is persisted in Docker volumes:
 │   └── Dockerfile             # Publish instance configuration
 ├── 🚦 dispatcher/
 │   ├── Dockerfile             # Dispatcher configuration
-│   └── dispatcher-sdk-2.0.235/ # Dispatcher SDK and configuration
+│   └── dispatcher-sdk-2.0.235/ # ⚠️ Required: Place manually
 └── 📦 install/                   # Place AEM JAR and packages here (git ignored)
     ├── aem-quickstart.jar     # ⚠️ Required: Place manually
     ├── cif-*.far              # ⚠️ Required: Place manually
