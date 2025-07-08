@@ -75,6 +75,9 @@ The dispatcher SDK tools are already included, but if you need to update:
    - Default ports: Author (4502), Publish (4503), Dispatcher (8080)
 
 4. **🐳 Start the environment**
+   
+   > ⚠️ **Important**: Before running `docker-compose up -d`, take a look at README.md files in particular folders and follow their instructions.
+   
    ```bash
    docker-compose up -d
    ```
@@ -83,6 +86,16 @@ The dispatcher SDK tools are already included, but if you need to update:
    - 🖥️ AEM Author: http://localhost:4502
    - 📰 AEM Publish: http://localhost:4503  
    - 🚦 Dispatcher: http://localhost:8080
+
+## ⚙️ Docker Networking Notes
+
+**Replication Agent Configuration:**
+When configuring replication agents in AEM Author, use container names instead of localhost:
+
+- ❌ **Don't use**: `http://localhost:4503/bin/receive?sling:authRequestLogin=1`
+- ✅ **Use instead**: `http://publish:4503/bin/receive?sling:authRequestLogin=1`
+
+**Why?** Docker containers communicate using container names as hostnames within the Docker network. The `publish` container name resolves to the correct internal IP address, while `localhost` refers to the container's own loopback interface, causing connection refused errors.
 
 ## 🛠️ Development
 
