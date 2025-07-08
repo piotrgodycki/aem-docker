@@ -1,0 +1,37 @@
+version: "3.8"
+name: "${COMPOSE_PROJECT_NAME}"
+services:
+  author:
+    build:
+      context: .
+      dockerfile: author/Dockerfile
+    ports:
+      - "${AEM_AUTHOR_PORT}:4502"
+      - "30303:30303"
+    volumes:
+      - author_data:/opt/aem/crx-quickstart
+
+  publish:
+    build:
+      context: .
+      dockerfile: publish/Dockerfile
+    ports:
+      - "${AEM_PUBLISH_PORT}:4503"
+      - "30304:30304"
+    volumes:
+      - publish_data:/opt/aem/crx-quickstart
+
+  dispatcher:
+    build:
+      context: ./dispatcher
+    ports:
+      - "${DISPATCHER_PORT}:80"
+    depends_on:
+      - publish
+    volumes:
+      - dispatcher_cache:/var/cache/apache2/dispatcher
+
+volumes:
+  author_data:
+  publish_data:
+  dispatcher_cache:

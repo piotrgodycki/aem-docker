@@ -1,0 +1,6 @@
+# Ignore all jar files
+*.jar
+*.sh
+
+# Ignore dispatcher folders
+dispatcher-sdk-*
