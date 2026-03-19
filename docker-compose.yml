@@ -30,7 +30,7 @@ services:
       - publish
     volumes:
       - dispatcher_cache:/var/cache/apache2/dispatcher
-
+      # - ${DISPATCHER_PATH}/dispatcher/src:/usr/local/apache2/conf/src:ro
 volumes:
   author_data:
   publish_data:
