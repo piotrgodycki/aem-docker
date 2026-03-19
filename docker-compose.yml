@@ -22,15 +22,25 @@ services:
       - publish_data:/opt/aem/crx-quickstart
 
   dispatcher:
-    build:
-      context: ./dispatcher
+    image: adobe/aem-cs/dispatcher-publish:2.0.235
     ports:
       - "${DISPATCHER_PORT}:80"
     depends_on:
       - publish
+    environment:
+      - AEM_HOST=publish
+      - AEM_PORT=4503
+      - ENVIRONMENT_TYPE=dev
+      - DISP_LOG_LEVEL=debug
+      - REWRITE_LOG_LEVEL=warn
+      - ALLOW_CACHE_INVALIDATION_GLOBALLY=true
     volumes:
-      - dispatcher_cache:/var/cache/apache2/dispatcher
-      # - ${DISPATCHER_PATH}/dispatcher/src:/usr/local/apache2/conf/src:ro
+      - dispatcher_cache:/mnt/var/www
+      - ${DISPATCHER_PATH:-./dispatcher/dispatcher-sdk-2.0.235/src}:/mnt/dev/src:ro
+      - ./dispatcher/dispatcher-sdk-2.0.235/lib/import_sdk_config.sh:/docker_entrypoint.d/zzz-import-sdk-config.sh:ro
+      - ./dispatcher/dispatcher-sdk-2.0.235/lib/dummy_gitinit_metadata.sh:/docker_entrypoint.d/zzz-overwrite_gitinit_metadata.sh:ro
+      - ./dispatcher/dispatcher-sdk-2.0.235/lib/overwrite_cache_invalidation.sh:/docker_entrypoint.d/zzz-overwrite_cache_invalidation.sh:ro
+      - ./dispatcher/dispatcher-sdk-2.0.235/lib:/usr/lib/dispatcher-sdk:ro
 volumes:
   author_data:
   publish_data:
