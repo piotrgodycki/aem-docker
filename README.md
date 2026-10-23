@@ -56,8 +56,9 @@ The dispatcher SDK tools are already included, but if you need to update:
 
    ```bash
    cd dispatcher
-   run chmod a+x aem-sdk-dispatcher-tools-x.y.z-unix.sh && ./aem-sdk-dispatcher-tools-x.y.z-unix.sh
+   chmod a+x aem-sdk-dispatcher-tools-x.y.z-unix.sh && ./aem-sdk-dispatcher-tools-x.y.z-unix.sh
    ```
+   - Set `DISPATCHER_SDK_VERSION` in `.env` and run `./scripts/dispatcher.sh load` (see [Dispatcher Configuration](#️-dispatcher-configuration-any-aem-project))
 
 ## 🚀 Setup Instructions
 
@@ -107,9 +108,44 @@ Both AEM instances are configured for remote debugging:
 - 🖥️ Author: port 30303
 - 📰 Publish: port 30304
 
-### ⚙️ Dispatcher Configuration
+### ⚙️ Dispatcher Configuration (any AEM project)
 
-Dispatcher configuration is located in `dispatcher/dispatcher-sdk-x.y.z/src/`:
+The dispatcher runs the official AEMaaCS image shipped with the Dispatcher SDK
+(`adobe/aem-ethos/dispatcher-publish`), so it works with the `dispatcher/src`
+config of **any** AEM project (generated from the AEM Project Archetype).
+The project's config is mounted into the container, nothing is copied into this repo.
+
+1. **Load the dispatcher image** (once per SDK version, after extracting the SDK into `dispatcher/`):
+   ```bash
+   ./scripts/dispatcher.sh load
+   ```
+
+2. **Point the dispatcher to your project**. You can pass the project root, its `dispatcher` folder or `dispatcher/src`:
+   ```bash
+   ./scripts/dispatcher.sh use ~/projects/wknd
+   ```
+   This sets `DISPATCHER_CONFIG_DIR` in `.env` and recreates the dispatcher container.
+   You can also edit `DISPATCHER_CONFIG_DIR` in `.env` by hand. By default the SDK example config is used.
+
+3. **Other commands**
+   ```bash
+   ./scripts/dispatcher.sh reload     # restart after changing config files
+   ./scripts/dispatcher.sh validate   # run the SDK validator on the current config
+   ./scripts/dispatcher.sh current    # show the config currently in use
+   ```
+
+Dispatcher settings in `.env`:
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `DISPATCHER_SDK_VERSION` | `2.0.235` | Version of the extracted SDK / image tag |
+| `DISPATCHER_CONFIG_DIR` | SDK example `src` | Folder with `conf.d` and `conf.dispatcher.d` |
+| `DISPATCHER_AEM_HOST` | `publish` | Backend host (`host.docker.internal` for AEM running on your machine) |
+| `DISPATCHER_AEM_PORT` | `4503` | Backend port |
+| `DISP_LOG_LEVEL` / `REWRITE_LOG_LEVEL` | `Warn` | Log levels (e.g. `Debug`, `Trace1`) |
+| `COMMERCE_ENDPOINT` | `http://localhost/graphql` | GraphQL endpoint used by CIF configs |
+
+Inside the project config:
 - 🌐 Virtual hosts: `conf.d/available_vhosts/`
 - 🚜 Farms: `conf.dispatcher.d/available_farms/`
 - 🔄 Rewrites: `conf.d/rewrites/`
@@ -131,8 +167,9 @@ AEM data is persisted in Docker volumes:
 ├── 📰 publish/
 │   └── Dockerfile             # Publish instance configuration
 ├── 🚦 dispatcher/
-│   ├── Dockerfile             # Dispatcher configuration
-│   └── dispatcher-sdk-2.0.235/ # ⚠️ Required: Place manually
+│   └── dispatcher-sdk-2.0.235/ # ⚠️ Required: Place manually (image + validator)
+├── 🧰 scripts/
+│   └── dispatcher.sh          # Load image, switch project config, validate, reload
 └── 📦 install/                   # Place AEM JAR and packages here (git ignored)
     ├── aem-quickstart.jar     # ⚠️ Required: Place manually
     ├── cif-*.far              # ⚠️ Required: Place manually
